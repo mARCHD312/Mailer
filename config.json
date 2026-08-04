@@ -1,0 +1,10 @@
+{
+    "email": "info@3dmarch.org",
+    "password": "Test135!+",
+    "excel_path": "E:/POSAO/Skripta 2.0 - mejl/TEST/Arhitektura_i_projektovanje - Copy.xlsx|E:/POSAO/Skripta 2.0 - mejl/TEST/Arhitektura_i_projektovanje.xlsx",
+    "limit": "50",
+    "subject": "Predlog za saradnju",
+    "body": "Po\u0161tovani,\n\nPi\u0161emo ispred kompanije...\nZa {company_name}.\n\nPozdrav",
+    "start_hour": "8",
+    "end_hour": "19"
+}
