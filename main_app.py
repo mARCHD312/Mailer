@@ -42,8 +42,6 @@ class MailApp(ctk.CTk):
             "password": "",
             "excel_path": "",
             "limit": "50",
-            "subject": "Predlog za saradnju",
-            "body": "Poštovani,\n\nPišemo ispred kompanije...\nZa {company_name}.\n\nPozdrav",
             "start_hour": "8",
             "end_hour": "17"
         }
@@ -59,8 +57,6 @@ class MailApp(ctk.CTk):
         self.config["password"] = self.entry_pass.get()
         self.config["excel_path"] = self.entry_excel.get()
         self.config["limit"] = self.entry_limit.get()
-        self.config["subject"] = self.entry_subject.get()
-        self.config["body"] = self.text_body.get("1.0", "end-1c")
         self.config["start_hour"] = self.entry_start.get()
         self.config["end_hour"] = self.entry_end.get()
         
@@ -118,17 +114,8 @@ class MailApp(ctk.CTk):
         self.lbl_db_info.pack()
 
     def setup_right_panel(self):
-        lbl_title = ctk.CTkLabel(self.frame_right, text="Tekst Emaila", font=("Arial", 16, "bold"))
+        lbl_title = ctk.CTkLabel(self.frame_right, text="Kontrole i Logovi", font=("Arial", 16, "bold"))
         lbl_title.pack(pady=10)
-
-        self.entry_subject = ctk.CTkEntry(self.frame_right, placeholder_text="Naslov mejla")
-        self.entry_subject.insert(0, self.config["subject"])
-        self.entry_subject.pack(fill="x", padx=20, pady=5)
-
-        ctk.CTkLabel(self.frame_right, text="Telo poruke (koristi {company_name} za ime firme):", font=("Arial", 12)).pack(anchor="w", padx=20)
-        self.text_body = ctk.CTkTextbox(self.frame_right, height=200)
-        self.text_body.insert("1.0", self.config["body"])
-        self.text_body.pack(fill="x", padx=20, pady=5)
 
         # Kontrole
         frame_controls = ctk.CTkFrame(self.frame_right, fg_color="transparent")
@@ -218,8 +205,6 @@ class MailApp(ctk.CTk):
         self.btn_stop.configure(state="normal")
 
         self.engine.start(
-            subject=self.entry_subject.get(),
-            body_template=self.text_body.get("1.0", "end-1c"),
             col_email="Email",
             col_name="Naziv"
         )

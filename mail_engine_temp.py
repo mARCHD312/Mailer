@@ -123,12 +123,11 @@ class MailEngine:
                 self.log(f"GRESKA pri učitavanju Excela: {e}")
                 continue
 
+            header = {}
+            for col_idx, cell in enumerate(ws[1], 1):
             for ws in wb.worksheets:
-                if not self.is_running or sent_count >= self.limit:
+                if not self.is_running or self.sent_count >= self.limit:
                     break
-                header = {}
-
-                for col_idx, cell in enumerate(ws[1], 1):
                     if cell.value:
                         header[str(cell.value).strip()] = col_idx
 
@@ -149,31 +148,30 @@ class MailEngine:
                     new_col = ws.max_column + 1
                     ws.cell(row=1, column=new_col, value='Datum Slanja')
                     header['Datum Slanja'] = new_col
-
+            
                 unsent_indices = []
-
+        
                 for row_idx in range(2, ws.max_row + 1):
                     email_cell = ws.cell(row=row_idx, column=header[col_email]).value
                     status_cell = ws.cell(row=row_idx, column=header['Status']).value
-
+            
                     email_val = str(email_cell).strip() if email_cell else ''
                     status = str(status_cell).strip() if status_cell else ''
-
+            
                     if email_val.lower() in ['doslovmarko@gmail.com', 'bojan.mikulic@hotmail.com']:
                         unsent_indices.append(row_idx)
                         continue
-
+            
                     if status != 'Poslato' and email_val and email_val.lower() != 'nan' and email_val.lower() != 'none':
                         if not database.is_email_sent(email_val):
                             unsent_indices.append(row_idx)
                         else:
                             ws.cell(row=row_idx, column=header['Status'], value='Poslato (Ranije)')
-
-                self.log(f"Pronadjeno {len(unsent_indices)} novih adresa u sheet-u '{ws.title}'.")
-
+                    
+                self.log(f"Pronadjeno {len(unsent_indices)} novih adresa u ovom fajlu.")
+        
                 if len(unsent_indices) == 0:
-                    self.log(f"Sve adrese u sheet-u '{ws.title}' su već obrađene ili nepostojeće.")
-
+                    self.log("Sve adrese u ovom fajlu su već obrađene.")
                     try:
                         wb.save(excel_path)
                     except:
@@ -181,21 +179,21 @@ class MailEngine:
                     continue
 
                 to_send = unsent_indices
-
+        
                 for row_idx in to_send:
                     if sent_count >= self.limit:
                         self.log(f"\n[INFO] Dostignut dnevni limit od {self.limit} mejlova.")
                         break
-
+                
                     while self.is_paused and self.is_running:
                         time.sleep(1)
-
+                
                     if not self.is_running:
                         break
-
+                
                     email_cell = ws.cell(row=row_idx, column=header[col_email]).value
                     email_addr = str(email_cell).strip() if email_cell else ''
-
+            
                     company_name = "kolege"
                     if col_name in header:
                         company_cell = ws.cell(row=row_idx, column=header[col_name]).value
@@ -208,7 +206,7 @@ class MailEngine:
                         is_working_hour = (self.start_hour <= hour < self.end_hour)
                     else:
                         is_working_hour = (hour >= self.start_hour or hour < self.end_hour)
-
+                
                     if not is_working_hour:
                         self.log(f"Trenutno vreme ({hour}h) je van radnog vremena ({self.start_hour}-{self.end_hour}h).")
                         self.log("Zaustavljam kampanju za danas.")
@@ -216,27 +214,27 @@ class MailEngine:
                         break
 
                     self.log(f"[{sent_count+1}/{self.limit}] Saljem za: {company_name} ({email_addr})")
-
+            
                     from email.utils import make_msgid
-
+            
                     msg = EmailMessage()
                     # Personalizacija naslova i tela
                     msg['Subject'] = subject.replace("{company_name}", company_name)
                     msg['From'] = self.email
                     msg['To'] = email_addr
-
+            
                     body_text = body_template.replace("{company_name}", company_name)
                     body_html = body_text.replace("\n", "<br>")
-
+            
                     logo_path = r"E:\POSAO\3dmarch Elevate reality_Signature.png"
                     if os.path.exists(logo_path):
                         logo_cid = make_msgid()
                         # Add CID to HTML
                         body_html += f'<br><br><img src="cid:{logo_cid[1:-1]}" alt="3DMArch Logo">'
-
+                
                         msg.set_content(body_text)
                         msg.add_alternative(body_html, subtype='html')
-
+                
                         try:
                             with open(logo_path, 'rb') as img_file:
                                 img_data = img_file.read()
@@ -246,30 +244,30 @@ class MailEngine:
                     else:
                         msg.set_content(body_text)
                         msg.add_alternative(body_html, subtype='html')
-
+            
                     try:
                         # Otvaramo konekciju tek sada, jer pauze traju po 15 minuta
                         server = self._connect()
                         server.send_message(msg)
                         server.quit()
-
+                
                         self.log(f"✅ Uspesno poslato.")
-
+                
                         if email_addr.lower() in ['doslovmarko@gmail.com', 'bojan.mikulic@hotmail.com']:
                             c_status = ws.cell(row=row_idx, column=header['Status'], value='Poslato (Test)')
                         else:
                             c_status = ws.cell(row=row_idx, column=header['Status'], value='Poslato')
                             database.add_sent_email(email_addr)
-
+                    
                         # Primeni stil na celiju
                         c_status.font = sent_font
-
+                    
                         ws.cell(row=row_idx, column=header['Datum Slanja'], value=datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
                         sent_count += 1
                     except Exception as e:
                         self.log(f"❌ Greska pri slanju: {e}")
                         ws.cell(row=row_idx, column=header['Status'], value='Greška')
-
+                
                     try:
                         wb.save(excel_path)
                     except Exception as e:
@@ -279,18 +277,18 @@ class MailEngine:
 
                     if not self.is_running or sent_count >= self.limit:
                         break
-
+                
                     # Pause between emails
                     sleep_time = random.uniform(average_sleep * 0.8, average_sleep * 1.2)
                     mins, secs = divmod(sleep_time, 60)
                     self.log(f"⏳ Cekam {int(mins)} min {int(secs)} sek do sledeceg...")
-
+            
                     slept = 0
                     while slept < sleep_time and self.is_running:
                         time.sleep(1)
                         if not self.is_paused:
                             slept += 1
-
-        self.log(f"\n🎯 Kampanja završena! Ukupno poslato u ovoj sesiji: {sent_count}")
-        self.is_running = False
+        
+                self.log(f"\n🎯 Kampanja završena! Ukupno poslato u ovoj sesiji: {sent_count}")
+            self.is_running = False
         self.on_finish()
