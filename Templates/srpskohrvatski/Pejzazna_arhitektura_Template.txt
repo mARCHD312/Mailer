@@ -1,0 +1,16 @@
+Naslov: 3D vizuelizacije pejzažne arhitekture za {company_name}
+
+Poštovani timu kompanije {company_name},
+
+Javljam se ispred tima 3DMArch. Sarađujemo sa pejzažnim arhitektama na izradi impresivnih 3D vizuelizacija i rendera master planova.
+
+Pomažemo firmama poput {company_name} da klijentima i saradnicima efikasno prenesu razmere, materijale i atmosferu otvorenih prostora.
+
+Naš relevantni portfolio možete pronaći ovde: https://3dmarch.org/archviz.html
+Slobodno posetite naš veb-sajt za više informacija o našim ostalim uslugama.
+
+Ukoliko ikada prepuštate izradu 3D rendera spoljnim saradnicima, voleo bih da stupimo u kontakt.
+
+Srdačan pozdrav,
+Marko Doslov
+3DMArch

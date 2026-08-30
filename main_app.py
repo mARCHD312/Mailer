@@ -43,7 +43,8 @@ class MailApp(ctk.CTk):
             "excel_path": "",
             "limit": "50",
             "start_hour": "8",
-            "end_hour": "17"
+            "end_hour": "17",
+            "language": "Engleski"
         }
         if os.path.exists(CONFIG_FILE):
             try:
@@ -59,6 +60,7 @@ class MailApp(ctk.CTk):
         self.config["limit"] = self.entry_limit.get()
         self.config["start_hour"] = self.entry_start.get()
         self.config["end_hour"] = self.entry_end.get()
+        self.config["language"] = self.combo_lang.get()
         
         with open(CONFIG_FILE, "w", encoding="utf-8") as f:
             json.dump(self.config, f, indent=4)
@@ -105,6 +107,14 @@ class MailApp(ctk.CTk):
         self.entry_end = ctk.CTkEntry(frame_limits, width=40)
         self.entry_end.insert(0, self.config["end_hour"])
         self.entry_end.pack(side="left", padx=5)
+
+        frame_lang = ctk.CTkFrame(self.frame_left, fg_color="transparent")
+        frame_lang.pack(fill="x", padx=20, pady=5)
+        
+        ctk.CTkLabel(frame_lang, text="Jezik:").pack(side="left")
+        self.combo_lang = ctk.CTkComboBox(frame_lang, values=["Engleski", "Srpskohrvatski"])
+        self.combo_lang.set(self.config.get("language", "Engleski"))
+        self.combo_lang.pack(side="left", padx=(5, 15))
 
         lbl_db = ctk.CTkLabel(self.frame_left, text="3. Zaštita od duplog slanja", font=("Arial", 16, "bold"))
         lbl_db.pack(pady=(20, 10))
@@ -195,6 +205,7 @@ class MailApp(ctk.CTk):
             limit=limit,
             start_hour=sh,
             end_hour=eh,
+            language=self.combo_lang.get(),
             log_callback=self.log,
             progress_callback=self.update_progress,
             finish_callback=self.on_engine_finish

@@ -10,7 +10,7 @@ import database
 import threading
 
 class MailEngine:
-    def __init__(self, excel_paths, smtp_server, port, email, password, limit, start_hour, end_hour, log_callback, progress_callback, finish_callback):
+    def __init__(self, excel_paths, smtp_server, port, email, password, limit, start_hour, end_hour, language, log_callback, progress_callback, finish_callback):
         self.excel_paths = excel_paths
         self.smtp_server = smtp_server
         self.port = port
@@ -19,6 +19,7 @@ class MailEngine:
         self.limit = limit
         self.start_hour = start_hour
         self.end_hour = end_hour
+        self.language = language
         self.log = log_callback
         self.update_progress = progress_callback
         self.on_finish = finish_callback
@@ -81,6 +82,10 @@ class MailEngine:
                 
             base_name = os.path.splitext(os.path.basename(excel_path))[0]
             templates_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Templates")
+            
+            if self.language == "Srpskohrvatski":
+                templates_dir = os.path.join(templates_dir, "srpskohrvatski")
+                
             template_path = None
             
             # Pokusavamo da nadjemo sablon cije ime se nalazi na pocetku imena baze (npr. Arhitektura_i_projektovanje)

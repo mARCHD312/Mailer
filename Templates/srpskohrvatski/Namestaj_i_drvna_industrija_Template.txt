@@ -1,0 +1,16 @@
+Naslov: 3D vizuelizacija proizvoda za {company_name}
+
+Poštovani timu kompanije {company_name},
+
+Kontaktiram vas ispred tima 3DMArch. Izrađujemo vrhunske 3D vizuelizacije proizvoda i radioničke crteže za proizvođače nameštaja i drvnu industriju.
+
+Naše usluge vam omogućavaju da klijentima predstavite nameštaj po meri u fotorealističnom kvalitetu i pre nego što proizvodnja počne.
+
+Naš portfolio vizuelizacije proizvoda možete pogledati ovde: https://3dmarch.org/productvisualization.html
+Slobodno posetite naš veb-sajt za više informacija o našim ostalim uslugama.
+
+Javite mi da li ste otvoreni za kratak poziv od 5 minuta kako bismo razgovarali o tome kako možemo pomoći kompaniji {company_name}.
+
+Srdačan pozdrav,
+Marko Doslov
+3DMArch
