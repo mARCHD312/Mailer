@@ -2,7 +2,7 @@ import sqlite3
 import os
 from datetime import datetime
 
-DB_PATH = r"E:\POSAO\Skripta 2.0 - mejl\sent_emails.db"
+DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "sent_emails.db")
 
 def init_db():
     """Kreira bazu i tabelu ako ne postoje."""

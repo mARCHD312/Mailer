@@ -233,7 +233,7 @@ class MailEngine:
                     body_text = body_template.replace("{company_name}", company_name)
                     body_html = body_text.replace("\n", "<br>")
 
-                    logo_path = r"E:\POSAO\3dmarch Elevate reality_Signature.png"
+                    logo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logo.png")
                     if os.path.exists(logo_path):
                         logo_cid = make_msgid()
                         # Add CID to HTML
