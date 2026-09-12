@@ -89,11 +89,14 @@ class MailEngine:
             template_path = None
             
             # Pokusavamo da nadjemo sablon cije ime se nalazi na pocetku imena baze (npr. Arhitektura_i_projektovanje)
+            def normalize_name(n):
+                return n.lower().replace("projektiranje", "projektovanje")
+
             if os.path.exists(templates_dir):
                 for t_file in os.listdir(templates_dir):
                     if t_file.endswith("_Template.txt"):
                         core_category = t_file.replace("_Template.txt", "")
-                        if base_name.startswith(core_category):
+                        if normalize_name(base_name).startswith(normalize_name(core_category)):
                             template_path = os.path.join(templates_dir, t_file)
                             break
                             
