@@ -92,34 +92,56 @@ class MailEngine:
             def normalize_name(n):
                 return n.lower().replace("projektiranje", "projektovanje")
 
+            core_category_found = None
             if os.path.exists(templates_dir):
                 for t_file in os.listdir(templates_dir):
                     if t_file.endswith("_Template.txt"):
                         core_category = t_file.replace("_Template.txt", "")
                         if normalize_name(base_name).startswith(normalize_name(core_category)):
-                            template_path = os.path.join(templates_dir, t_file)
+                            core_category_found = core_category
                             break
                             
-            if not template_path:
-                template_path = os.path.join(templates_dir, f"{base_name}_Template.txt")
+            matching_templates = []
+            if core_category_found:
+                # Find all versions for this core category
+                for t_file in os.listdir(templates_dir):
+                    if t_file.startswith(core_category_found + "_Template") and t_file.endswith(".txt"):
+                        matching_templates.append(os.path.join(templates_dir, t_file))
+            else:
+                # Fallback if no core category found by prefix
+                fallback_base = f"{base_name}_Template"
+                if os.path.exists(templates_dir):
+                    for t_file in os.listdir(templates_dir):
+                        if t_file.startswith(fallback_base) and t_file.endswith(".txt"):
+                            matching_templates.append(os.path.join(templates_dir, t_file))
+                
+                if not matching_templates:
+                    matching_templates.append(os.path.join(templates_dir, f"{base_name}_Template.txt"))
             
             self.log(f"\n--- Otvaram fajl: {os.path.basename(excel_path)} ---")
             
-            if not os.path.exists(template_path):
-                self.log(f"GRESKA: Ne mogu da pronađem šablon za ovu bazu.")
-                self.log(f"Očekivani fajl: {template_path}")
+            loaded_templates = []
+            for t_path in matching_templates:
+                if not os.path.exists(t_path):
+                    continue
+                try:
+                    with open(t_path, 'r', encoding='utf-8') as tf:
+                        template_content = tf.read().strip()
+                    tpl_lines = template_content.split('\n', 1)
+                    if len(tpl_lines) > 0:
+                        subject = tpl_lines[0].replace('Subject:', '').strip()
+                        body_template = tpl_lines[1].strip() if len(tpl_lines) > 1 else ""
+                        loaded_templates.append((subject, body_template))
+                except Exception as e:
+                    self.log(f"GRESKA pri čitanju šablona {t_path}: {e}")
+                    
+            if not loaded_templates:
+                self.log(f"GRESKA: Ne mogu da pronađem šablone za ovu bazu.")
+                self.log(f"Očekivani prefiks: {core_category_found or base_name}")
                 self.log(f"Preskačem bazu {base_name}...")
                 continue
-                
-            try:
-                with open(template_path, 'r', encoding='utf-8') as tf:
-                    template_content = tf.read().strip()
-                tpl_lines = template_content.split('\n', 1)
-                subject = tpl_lines[0].replace('Subject:', '').strip()
-                body_template = tpl_lines[1].strip() if len(tpl_lines) > 1 else ""
-            except Exception as e:
-                self.log(f"GRESKA pri čitanju šablona: {e}")
-                continue
+            else:
+                self.log(f"Učitano {len(loaded_templates)} verzija šablona za ovu bazu.")
                 
             if not os.path.exists(excel_path):
                 self.log(f"GRESKA: Fajl nije pronađen: {excel_path}")
@@ -226,6 +248,9 @@ class MailEngine:
                     self.log(f"[{sent_count+1}/{self.limit}] Saljem za: {company_name} ({email_addr})")
 
                     from email.utils import make_msgid
+
+                    # Odabir nasumicnog sablona
+                    subject, body_template = random.choice(loaded_templates)
 
                     msg = EmailMessage()
                     # Personalizacija naslova i tela
