@@ -265,8 +265,10 @@ class MailEngine:
 
                         if email_addr.lower() in ['doslovmarko@gmail.com', 'bojan.mikulic@hotmail.com']:
                             c_status = ws.cell(row=row_idx, column=header['Status'], value='Poslato (Test)')
+                            evidencija_status = 'Poslato (Test)'
                         else:
                             c_status = ws.cell(row=row_idx, column=header['Status'], value='Poslato')
+                            evidencija_status = 'Poslato'
                             database.add_sent_email(email_addr)
 
                         # Primeni stil na celiju
@@ -277,6 +279,36 @@ class MailEngine:
                     except Exception as e:
                         self.log(f"❌ Greska pri slanju: {e}")
                         ws.cell(row=row_idx, column=header['Status'], value='Greška')
+                        evidencija_status = 'Greška'
+
+                    # --- ZAPIS U EVIDENCIJU ---
+                    # Pokusaj da nadjes kolonu za Grad/Mesto
+                    city_name = ""
+                    for h_key, h_idx in header.items():
+                        if h_key.lower() in ['grad', 'city', 'mesto', 'adresa']:
+                            c_val = ws.cell(row=row_idx, column=h_idx).value
+                            if c_val:
+                                city_name = str(c_val).strip()
+                            break
+
+                    evidencija_path = r"E:\POSAO\Skripta 2.0 - mejl\evidencija\Evidencija_Poslatih_Mejlova.xlsx"
+                    try:
+                        import openpyxl as opx
+                        if not os.path.exists(evidencija_path):
+                            ewb = opx.Workbook()
+                            ews = ewb.active
+                            ews.title = "Evidencija"
+                            ews.append(["Datum i Vreme", "Firma", "Email", "Grad", "Status"])
+                        else:
+                            ewb = opx.load_workbook(evidencija_path)
+                            ews = ewb.active
+
+                        now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                        ews.append([now_str, company_name, email_addr, city_name, evidencija_status])
+                        ewb.save(evidencija_path)
+                    except Exception as ev_err:
+                        self.log(f"⚠️ Upozorenje: Nije moguce upisati u evidenciju (da li je fajl otvoren?): {ev_err}")
+                    # --------------------------
 
                     try:
                         wb.save(excel_path)

@@ -1,0 +1,16 @@
+Naslov: Profesionalne usluge 3D modelovanja za {company_name}
+
+Zdravo {company_name} timu,
+
+Moje ime je Marko, pišem ispred 3DMArch-a. Specijalizovani smo za visokokvalitetnu izradu 3D aseta, tehničko crtanje i precizno 3D modelovanje.
+
+Ukoliko {company_name} ikada bude tražio pouzdan eksterni tim za pomoć u razvoju detaljnih modela, prototipova ili aseta spremnih za igre, imamo veštine da vam asistiramo.
+
+Pogledajte naš portfolio 3D aseta na ovom linku: https://3dmarch.org/gameassets.html
+Takođe možete posetiti naš sajt da saznate više o ostalim rešenjima koja nudimo.
+
+Da li ste dostupni za kratak uvodni poziv negde tokom sledeće nedelje?
+
+Srdačan pozdrav,
+Marko Doslov
+3DMArch

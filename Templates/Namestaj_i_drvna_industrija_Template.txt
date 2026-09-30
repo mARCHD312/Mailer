@@ -6,11 +6,10 @@ I am contacting you from 3DMArch. We create high-end 3D product visualizations a
 
 Our services allow you to showcase custom furniture to your clients in photorealistic quality before production even begins. 
 
-You can check out our product visualization portfolio here: https://3dmarch.org/productvisualization.html
-Feel free to browse our website for more information on our other services as well.
+You can check out our product visualization portfolio here: https://3dmarch.org.html
 
 Let me know if you’d be open to a 5-minute call to discuss how we could assist {company_name}.
 
 Best regards,
-Marko Doslov
+[Your Name]
 3DMArch
